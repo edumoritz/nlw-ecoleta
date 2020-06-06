@@ -42,16 +42,6 @@ const Home = () => {
       });
   }, [selectedUf]);
 
-  function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) {
-    const uf = event.target.value;
-    console.log(uf)
-    setSelectedUf(uf);
-  }
-  function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
-    const city = event.target.value;
-    setSelectedCity(city);
-  }
-
   function handleNavigateToPoints() {
     const uf = selectedUf;
     const city = selectedCity;
