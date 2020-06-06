@@ -49,6 +49,9 @@ That aims to connect people to companies that collect specific waste such as lig
     <img alt="Example" title="Example" src="demo/capa.svg" width="500px" />
 </h1>
 
+## :trophy: Challenge
+
+This project includes the challenge proposed by Diego to change the Textinput of UF and cities by Combobox by consulting the API of IBGE
 
 ## :rocket: Technologies
 

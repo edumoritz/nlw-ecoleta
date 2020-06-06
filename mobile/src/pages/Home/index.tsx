@@ -1,24 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Feather as Icon } from '@expo/vector-icons';
-import { View, ImageBackground, Text, Image, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View, ImageBackground,
+  Text, Image, StyleSheet, Picker, KeyboardAvoidingView, Platform
+} from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
+interface IBGEUFResponse {
+  sigla: string;
+}
+
+interface IBGECityResponse {
+  nome: string;
+}
+
 const Home = () => {
-  const [uf, setUf] = useState('');
-  const [city, setCity] = useState('');
+  const [ufs, setUfs] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
   const navigation = useNavigation();
 
+  const [selectedUf, setSelectedUf] = useState('');
+  const [selectedCity, setSelectedCity] = useState('0');
+
+  useEffect(() => {
+    axios.get<IBGEUFResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
+      const ufInitials = response.data.map(uf => uf.sigla);
+      setUfs(ufInitials);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (selectedUf === '0') return;
+
+    axios
+      .get<IBGECityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`)
+      .then(response => {
+        const cityNames = response.data.map(city => city.nome);
+        setCities(cityNames);
+      });
+  }, [selectedUf]);
+
+  function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) {
+    const uf = event.target.value;
+    console.log(uf)
+    setSelectedUf(uf);
+  }
+  function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
+    const city = event.target.value;
+    setSelectedCity(city);
+  }
+
   function handleNavigateToPoints() {
+    const uf = selectedUf;
+    const city = selectedCity;
     navigation.navigate('Points', {
-      uf, 
+      uf,
       city
     });
   }
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ImageBackground
@@ -35,22 +79,26 @@ const Home = () => {
         </View>
 
         <View style={styles.footer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a UF"
-            value={uf}
-            maxLength={2}
-            autoCapitalize="characters"
-            autoCorrect={false}
-            onChangeText={text => setUf(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a Cidade"
-            value={city}
-            autoCorrect={false}
-            onChangeText={setCity}
-          />
+
+          <Picker
+            selectedValue={selectedUf}
+            style={styles.picker}
+            onValueChange={(itemValue, itemIndex) => setSelectedUf(itemValue)}
+          >
+            {ufs.map(uf => (
+              <Picker.Item key={uf} label={uf} value={uf} />
+            ))}
+          </Picker>
+          <Picker
+            selectedValue={selectedCity}
+            style={styles.picker}
+            onValueChange={(itemValue, itemIndex) => setSelectedCity(itemValue)}
+          >
+            {cities.map(city => (
+              <Picker.Item key={city} label={city} value={city} />
+            ))}
+          </Picker>
+
           <RectButton style={styles.button} onPress={handleNavigateToPoints}>
             <View style={styles.buttonIcon}>
               <Text>
@@ -100,13 +148,13 @@ const styles = StyleSheet.create({
 
   select: {},
 
-  input: {
+  picker: {
     height: 60,
     backgroundColor: '#FFF',
-    borderRadius: 10,
     marginBottom: 8,
-    paddingHorizontal: 24,
-    fontSize: 16,
+  },
+  pickerItem: {
+
   },
 
   button: {
