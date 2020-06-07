@@ -3,7 +3,7 @@
 </h1>
 
 <h4 align="center"> 
-	:construction: NextLevelWeek 🚀 In progress.. :construction:
+	NextLevelWeek 🚀 
 </h4>
 <p align="center">
   <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/edumoritz/nlw-ecoleta?color=%2304D361%22">
@@ -74,7 +74,7 @@ installed on your computer.
 
 From your command line:
 
-### Install API In progress.. :construction:
+### Install API 
 ```bash
 # Clone this repository
 $ git clone https://github.com/edumoritz/nlw-ecoleta
